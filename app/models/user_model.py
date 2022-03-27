@@ -1,6 +1,6 @@
-from app.models import conn
+from app.models import DatabaseConnector
 
-class User:
+class User(DatabaseConnector):
     def __init__(self, **kwargs):
         self.email = kwargs["email"]
         self.birthdate = kwargs["birthdate"]
@@ -8,14 +8,16 @@ class User:
         self.married = kwargs["married"]
         self.account_balance = kwargs["account_balance"]
 
-    @staticmethod
-    def read_users():
-        cur = conn.cursor()
-
+    @classmethod
+    def read_users(cls):
+        #Cria os atributos conn e cur na classe Pai(DatabaseConector)
+        cls.get_conn_cur()
         query = "SELECT * FROM users;"
 
-        cur.execute(query)
+        cls.cur.execute(query)
 
-        users = cur.fetchall()
+        users = cls.cur.fetchall()
+        cls.cur.close()
+        cls.conn.close()
 
         return users

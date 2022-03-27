@@ -9,3 +9,9 @@ configs = {
 }
 
 conn = psycopg2.connect(**configs)
+
+class DatabaseConnector:
+    @classmethod
+    def get_conn_cur(cls):
+        cls.conn = psycopg2.connect(**configs)
+        cls.cur = cls.conn.cursor()
