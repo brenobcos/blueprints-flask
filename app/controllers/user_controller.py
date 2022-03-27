@@ -17,3 +17,6 @@ def get_users():
     serialized_users = [dict(zip(user_columns, user)) for user in users]
 
     return jsonify(serialized_users)
+
+def get_user_by_id():
+    return{"msg":"get_user_by_id"}

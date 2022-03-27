@@ -1,20 +1,11 @@
 from flask import Blueprint
 
-from app.controllers.user_controller import get_users
+from app.controllers.user_controller import get_users, get_user_by_id
 
-bp = Blueprint("users", __name__, url_prefix="/api")
+bp = Blueprint("users", __name__, url_prefix="/users")
 
+bp.get("")(get_users)
+bp.get("/<user_id>")(get_user_by_id)
 
-# def user_route(app: Flask):
-#     # @app.get("/users")
-#     # def retrieve():
-#     #     return {"msg": "rota busca de usuários"}
-#     ...
-
-# @bp.get("/users")
-# def retrieve():
-#     return get_users()
-
-bp.get("/users")(get_users)
 
 
