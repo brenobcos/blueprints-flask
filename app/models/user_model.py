@@ -1,5 +1,6 @@
 from app.models import DatabaseConnector
 
+
 class User(DatabaseConnector):
     def __init__(self, **kwargs):
         self.email = kwargs["email"]
@@ -10,7 +11,7 @@ class User(DatabaseConnector):
 
     @classmethod
     def read_users(cls):
-        #Cria os atributos conn e cur na classe Pai(DatabaseConector)
+        # Cria os atributos conn e cur na classe Pai(DatabaseConector)
         cls.get_conn_cur()
         query = "SELECT * FROM users;"
 
@@ -21,3 +22,27 @@ class User(DatabaseConnector):
         cls.conn.close()
 
         return users
+
+    def create_user(self):
+        self.get_conn_cur()
+
+        query = """
+            INSERT INTO users
+                (email, birthdate, children, married, account_balance)
+            VALUES
+                (%s,%s,%s,%s,%s)
+            RETURNING * 
+        """
+
+        query_values = tuple(self.__dict__.values())
+
+        self.cur.execute(query, query_values)
+
+        self.conn.commit()
+
+        inserted_user = self.cur.fetchone()
+
+        self.cur.close()
+        self.conn.close()
+
+        return inserted_user
