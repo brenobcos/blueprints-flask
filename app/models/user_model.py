@@ -1,13 +1,29 @@
+from turtle import update
 from app.models import DatabaseConnector
+from psycopg2 import sql
 
 
 class User(DatabaseConnector):
+
+    user_columns = [
+        "_id",
+        "email",
+        "birthdate",
+        "children",
+        "married",
+        "account_balance",
+    ]
+
     def __init__(self, **kwargs):
         self.email = kwargs["email"]
         self.birthdate = kwargs["birthdate"]
         self.children = kwargs["children"]
         self.married = kwargs["married"]
         self.account_balance = kwargs["account_balance"]
+
+    @classmethod
+    def serialize(cls, data: tuple):
+        return dict(zip(cls.user_columns, data))
 
     @classmethod
     def read_users(cls):
@@ -24,6 +40,7 @@ class User(DatabaseConnector):
         return users
 
     def create_user(self):
+
         self.get_conn_cur()
 
         query = """
@@ -46,3 +63,35 @@ class User(DatabaseConnector):
         self.conn.close()
 
         return inserted_user
+
+    @classmethod
+    def update_user(cls, user_id: str, payload: dict):
+        cls.get_conn_cur()
+
+        columns = [sql.Identifier(key) for key in payload.keys()]
+        values = [sql.Literal(value) for value in payload.values()]
+        sql_user_id = sql.Literal(user_id)
+
+        query = sql.SQL(
+            """
+                UPDATE
+                    users
+                SET
+                    ({columns}) = ROW({values})
+                WHERE
+                    id={id}
+                RETURNING *;            
+            """
+        ).format(
+            id=sql_user_id,
+            columns=sql.SQL(",").join(columns),
+            values=sql.SQL(",").join(values),
+        )
+
+        cls.cur.execute(query)
+
+        update_user = cls.cur.fetchone()
+
+        cls.commit_and_close()
+
+        return update_user

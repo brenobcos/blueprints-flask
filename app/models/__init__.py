@@ -15,3 +15,9 @@ class DatabaseConnector:
     def get_conn_cur(cls):
         cls.conn = psycopg2.connect(**configs)
         cls.cur = cls.conn.cursor()
+
+    @classmethod
+    def commit_and_close(cls):
+        cls.conn.commit()
+        cls.conn.close()
+        cls.cur.close()
