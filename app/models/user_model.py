@@ -5,6 +5,8 @@ from psycopg2 import sql
 
 class User(DatabaseConnector):
 
+    table_name = "users"
+
     user_columns = [
         "_id",
         "email",
@@ -26,43 +28,51 @@ class User(DatabaseConnector):
         return dict(zip(cls.user_columns, data))
 
     @classmethod
-    def read_users(cls):
-        # Cria os atributos conn e cur na classe Pai(DatabaseConector)
-        cls.get_conn_cur()
-        query = "SELECT * FROM users;"
+    def select_all(cls):
+        return super().select_all(cls.table_name)
 
-        cls.cur.execute(query)
+    # @classmethod
+    # def read_users(cls):
+    #     # Cria os atributos conn e cur na classe Pai(DatabaseConector)
+    #     cls.get_conn_cur()
+    #     query = "SELECT * FROM users;"
 
-        users = cls.cur.fetchall()
-        cls.cur.close()
-        cls.conn.close()
+    #     cls.cur.execute(query)
 
-        return users
+    #     users = cls.cur.fetchall()
+    #     cls.cur.close()
+    #     cls.conn.close()
 
-    def create_user(self):
+    #     return users
 
-        self.get_conn_cur()
+    # def create_user(self):
 
-        query = """
-            INSERT INTO users
-                (email, birthdate, children, married, account_balance)
-            VALUES
-                (%s,%s,%s,%s,%s)
-            RETURNING * 
-        """
+    #     self.get_conn_cur()
 
-        query_values = tuple(self.__dict__.values())
+    #     query = """
+    #         INSERT INTO users
+    #             (email, birthdate, children, married, account_balance)
+    #         VALUES
+    #             (%s,%s,%s,%s,%s)
+    #         RETURNING * 
+    #     """
 
-        self.cur.execute(query, query_values)
+    #     query_values = tuple(self.__dict__.values())
 
-        self.conn.commit()
+    #     self.cur.execute(query, query_values)
 
-        inserted_user = self.cur.fetchone()
+    #     self.conn.commit()
 
-        self.cur.close()
-        self.conn.close()
+    #     inserted_user = self.cur.fetchone()
 
-        return inserted_user
+    #     self.cur.close()
+    #     self.conn.close()
+
+    #     return inserted_user
+
+    def insert_into(self):
+        return super().insert_into(self.__dict__, self.table_name)
+
 
     @classmethod
     def update_user(cls, user_id: str, payload: dict):

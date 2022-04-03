@@ -5,7 +5,7 @@ from psycopg2.errors import UniqueViolation
 
 
 def get_users():
-    users = User.read_users()
+    users = User.select_all()
 
     serialized_users = [User.serialize(user) for user in users]
 
@@ -22,7 +22,8 @@ def add_user():
     user = User(**data)
 
     try:
-        inserted_user = user.create_user()
+        # inserted_user = user.create_user()
+        inserted_user = user.insert_into()
     except UniqueViolation:
         return {'error': 'email already in use'}, HTTPStatus.UNPROCESSABLE_ENTITY
 
