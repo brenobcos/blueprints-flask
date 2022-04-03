@@ -7,14 +7,14 @@ class User(DatabaseConnector):
 
     table_name = "users"
 
-    user_columns = [
-        "_id",
-        "email",
-        "birthdate",
-        "children",
-        "married",
-        "account_balance",
-    ]
+    # user_columns = [
+    #     "_id",
+    #     "email",
+    #     "birthdate",
+    #     "children",
+    #     "married",
+    #     "account_balance",
+    # ]
 
     def __init__(self, **kwargs):
         self.email = kwargs["email"]
@@ -23,9 +23,9 @@ class User(DatabaseConnector):
         self.married = kwargs["married"]
         self.account_balance = kwargs["account_balance"]
 
-    @classmethod
-    def serialize(cls, data: tuple):
-        return dict(zip(cls.user_columns, data))
+    # @classmethod
+    # def serialize(cls, data: tuple):
+    #     return dict(zip(cls.user_columns, data))
 
     @classmethod
     def select_all(cls):

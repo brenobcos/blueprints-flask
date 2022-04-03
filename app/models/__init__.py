@@ -1,6 +1,6 @@
 import psycopg2
 import os
-from psycopg2 import sql
+from psycopg2 import sql, extras
 
 configs = {
     "host": os.getenv("DB_HOST"),
@@ -13,10 +13,18 @@ conn = psycopg2.connect(**configs)
 
 
 class DatabaseConnector:
+    # Atributo abaixo altera o tipo do valor que está vindo como str para float
+    DEC2FLOAT = psycopg2.extensions.new_type(
+        psycopg2.extensions.DECIMAL.values,
+        "DEC2FLOAT",
+        lambda value, curs: float(value) if value is not None else None,
+    )
+    psycopg2.extensions.register_type(DEC2FLOAT)
+
     @classmethod
     def get_conn_cur(cls):
         cls.conn = psycopg2.connect(**configs)
-        cls.cur = cls.conn.cursor()
+        cls.cur = cls.conn.cursor(cursor_factory=extras.RealDictCursor)
 
     @classmethod
     def commit_and_close(cls, commit=True):

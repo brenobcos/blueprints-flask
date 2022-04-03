@@ -7,9 +7,10 @@ from psycopg2.errors import UniqueViolation
 def get_users():
     users = User.select_all()
 
-    serialized_users = [User.serialize(user) for user in users]
+    # serialized_users = [User.serialize(user) for user in users]
 
-    return jsonify(serialized_users)
+    # return jsonify(serialized_users)
+    return jsonify(users)
 
 
 def get_user_by_id():

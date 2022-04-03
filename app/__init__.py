@@ -9,3 +9,5 @@ def create_app():
     routes.init_app(app)
 
     return app
+
+    # 38min
